@@ -1,0 +1,142 @@
+import java.util.Scanner;  
+class Room 
+{  
+    private String roomNumber;  
+    private String category;  
+    private boolean isAvailable; 
+    public Room(String roomNumber, String category) 
+    {  
+        this.roomNumber = roomNumber;  
+        this.category = category;  
+        this.isAvailable = true;  
+    }  
+    public String getRoomNumber() 
+    {  
+        return roomNumber;  
+    }  
+    public String getCategory() 
+    {  
+        return category;  
+    }  
+    public boolean isAvailable() 
+    {  
+        return isAvailable;  
+    }  
+    public void reserve() 
+    {  
+        isAvailable = false;  
+    }  
+    public void release() 
+    {  
+        isAvailable = true;  
+    }  
+}  
+class Reservation 
+{  
+    private Room room;  
+    private String customerName;  
+    private boolean isPaid;  
+    public Reservation(Room room, String customerName) 
+    {  
+        this.room = room;  
+        this.customerName = customerName;  
+        this.isPaid = false; 
+    }  
+    public Room getRoom() 
+    {  
+        return room;  
+    }  
+    public String getCustomerName() 
+    {  
+        return customerName;  
+    }  
+    public boolean isPaid() 
+    {  
+        return isPaid;  
+    }  
+    public void makePayment() 
+    {  
+        this.isPaid = true;  
+    }  
+}  
+class Hotel 
+{  
+    private Room[] rooms;  
+    private int roomCount;  
+    public Hotel(int capacity) 
+    {  
+        rooms = new Room[capacity];  
+        roomCount = 0;  
+    }  
+    public void addRoom(Room room) 
+    {  
+        if (roomCount < rooms.length) 
+        {  
+            rooms[roomCount++] = room;  
+        }  
+    }  
+    public Room searchAvailableRoom(String category) 
+    {  
+        for (int i = 0; i < roomCount; i++) 
+        {  
+            if (rooms[i].getCategory().equalsIgnoreCase(category) && rooms[i].isAvailable()) 
+            {  
+                return rooms[i];  
+            }  
+        }  
+        return null;  
+    }  
+}  
+public class HotelReservationSystem 
+{  
+    public static void main(String[] args) 
+    {  
+        Hotel hotel = new Hotel(10);  
+        hotel.addRoom(new Room("101", "Single"));  
+        hotel.addRoom(new Room("102", "Double"));  
+        hotel.addRoom(new Room("201", "Suite")); 
+        Scanner scanner = new Scanner(System.in);  
+        String customerName;  
+        System.out.println("Welcome to the Hotel Reservation System!");  
+        while (true) 
+        {  
+            System.out.print("Enter your name (or type 'exit' to quit): ");  
+            customerName = scanner.nextLine();  
+            if (customerName.equalsIgnoreCase("exit")) 
+            {  
+                break;  
+            }  
+            System.out.print("Enter room category (Single/Double/Suite): ");  
+            String category = scanner.nextLine(); 
+            Room availableRoom = hotel.searchAvailableRoom(category);  
+            if (availableRoom != null) 
+            {  
+                availableRoom.reserve();  
+                Reservation reservation = new Reservation(availableRoom, customerName);  
+                System.out.println("Reservation successful! Room Number: " + reservation.getRoom().getRoomNumber());  
+                System.out.print("Proceed to payment? (yes/no): ");  
+                String paymentChoice = scanner.nextLine();  
+                if (paymentChoice.equalsIgnoreCase("yes")) 
+                {  
+                    reservation.makePayment();  
+                    System.out.println("Payment successful for " + reservation.getCustomerName() + "!");  
+                } 
+                else 
+                {  
+                    System.out.println("Reservation made but not paid. Please complete payment to confirm your booking.");  
+                }  
+                System.out.println("Booking Details:");  
+                System.out.println("Customer Name: " + reservation.getCustomerName());  
+                System.out.println("Room Number: " + reservation.getRoom().getRoomNumber());  
+                System.out.println("Room Category: " + reservation.getRoom().getCategory());  
+                System.out.println("Payment Status: " + (reservation.isPaid() ? "Paid" : "Not Paid"));  
+            } 
+            else 
+            {  
+                System.out.println("No available rooms in the " + category + " category.");  
+            }  
+        }  
+        scanner.close();  
+        System.out.println("Thank you for using the Hotel Reservation System!");  
+    }  
+}
